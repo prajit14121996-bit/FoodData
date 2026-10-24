@@ -1,0 +1,4 @@
+import fs from 'node:fs/promises';import {FileBlob,SpreadsheetFile} from '@oai/artifact-tool';
+const p='/Users/prajitkumarlaha/Desktop/DB_owners/FoodApp/outputs/ingredients-menu-planning-20261023/Chips_Condiments_Sauces_Bottled_Products.xlsx';const w=await SpreadsheetFile.importXlsx(await FileBlob.load(p));
+for(const [s,r] of [['Indian Regional Rice','A1:G13'],['Indian Regional Rice & Sources','A1:C11'],['Packaged Products','A189:I189']]){const x=await w.inspect({kind:'table',sheetId:s,range:r,include:'values',tableMaxRows:16,tableMaxCols:12,maxChars:14000});await fs.writeFile(`/private/tmp/${s.replaceAll(' ','_').replaceAll('&','and')}_verified.ndjson`,x.ndjson);}
+for(const [s,r,f] of [['Indian Regional Rice','A1:G13','/private/tmp/indian_rice_verified.png'],['Packaged Products','A188:I189','/private/tmp/judima_product_verified.png']]){const b=await w.render({sheetName:s,range:r,scale:1,format:'png'});await fs.writeFile(f,new Uint8Array(await b.arrayBuffer()));}

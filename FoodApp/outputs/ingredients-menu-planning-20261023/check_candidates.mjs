@@ -1,0 +1,12 @@
+import {FileBlob,SpreadsheetFile} from '@oai/artifact-tool';
+const p='/Users/prajitkumarlaha/Desktop/DB_owners/FoodApp/outputs/ingredients-menu-planning-20261023/Chips_Condiments_Sauces_Bottled_Products.xlsx';
+const w=await SpreadsheetFile.importXlsx(await FileBlob.load(p));
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+const names=[];
+for(const n of ['Global Ingredients','Biodiversity Foods','African Food Diversity','Regional Crop Forms','African Foods Batch 2']) for(const r of w.worksheets.getItem(n).getUsedRange().values.slice(3)) if(r[1]||r[0]) names.push(norm(n==='Global Ingredients'?r[1]:r[0]));
+const candidates=['Blue fenugreek','Utskho suneli','Trigonella caerulea','Imeretian saffron','Marigold saffron','Tagetes patula','Jonjoli','Staphylea colchica','Tkemali plum','Georgian sour plum','Cornelian cherry','Adjika','Narsharab','Churchkhela'];
+console.log(JSON.stringify(candidates.map(x=>[x,names.includes(norm(x)),names.filter(n=>n.includes(norm(x).slice(0,5))).slice(0,8)]),null,2));
+const pv= w.worksheets.getItem('Packaged Products').getUsedRange().values;
+const pk=pv.slice(3).map(r=>norm(r[0]));
+const prod=['Tkemali sauce','Adjika paste','Narsharab','Svan salt','Tkemali plum sauce'];
+console.log('packaged',JSON.stringify(prod.map(x=>[x,pk.includes(norm(x)),pk.filter(n=>n.includes(norm(x).slice(0,5))).slice(0,8)]),null,2));
